@@ -118,11 +118,11 @@ bootstacktop 标签在文件的 .data 段中被定义，它位于 bootstack 这�
 
    结果如下图：
 
-   ​	![从0x0100开始的代码](images\p1.png)
+   ​	![从0x0100开始的代码](images/p1.png)
 
 4. 随后使用`si`命令单步执行，直到执行到`0x1014: jr t0`，pc跳转至0x80000000，即跳转至OpenSBI.bin所在位置。
 
-​		![跳转OpenSBI执行](images\p2.png)
+​		![跳转OpenSBI执行](images/p2.png)
 
 ## 3. 讨论
 
@@ -178,7 +178,7 @@ QEMU模拟的这款risc-v处理器的os启动过程如下：
 - `stack`，即栈，用来存储程序运行过程中的**局部变量**，以及负责**函数**调用时的各种机制。它从高地址向低地址增长；
 - `heap`，即堆，用来支持程序运行过程中内存的**动态分配**。
 
-​	![program_memory_layout](images\program_memory_layout.png)
+​	![program_memory_layout](images/program_memory_layout.png)
 
 链接器的作用是把输入文件（ `.o` 文件）链接成输出文件（ `elf` 文件）。一般来说，输入文件和输出文件都有很多 section，**链接脚本**（linker script）的作用，就是描述**怎样把输入文件的 section 映射到输出文件的 section**，同时**规定这些 section 的内存布局**。
 
