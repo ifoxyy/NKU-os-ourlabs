@@ -118,11 +118,11 @@ bootstacktop 标签在文件的 .data 段中被定义，它位于 bootstack 这�
 
    结果如下图：
 
-   ​	![从0x0100开始的代码](.\images\从0x0100开始的代码.png)
+   ​	![从0x0100开始的代码](.\images\p1.png)
 
 4. 随后使用`si`命令单步执行，直到执行到`0x1014: jr t0`，pc跳转至0x80000000，即跳转至OpenSBI.bin所在位置。
 
-​		![跳转OpenSBI执行](.\images\跳转OpenSBI执行.png)
+​		![跳转OpenSBI执行](.\images\p2.png)
 
 ## 3. 讨论
 
