@@ -125,13 +125,13 @@ bootstacktop 标签在文件的 .data 段中被定义，它位于 bootstack 这�
 
    结果如下图：
 
-   ​	![从0x0100开始的代码](images/p1.png)
+   ​	![从0x0100开始的代码](./images/p1.png)
 
 4. 随后使用`si`命令单步执行，直到执行到`0x1014: jr t0`，pc跳转至0x80000000，即跳转至OpenSBI.bin所在位置。
 
      结果如下图：
 
-​	![跳转OpenSBI执行](images/p2.png)
+​	![跳转OpenSBI执行](./images/p2.png)
 
 **下部分由【梁杰2313771】编写。**
 
@@ -141,11 +141,11 @@ bootstacktop 标签在文件的 .data 段中被定义，它位于 bootstack 这�
   
   结果显示连接成功，PC指向0x1000
 
-  ![GDB与QEMU连接](images/pa.png)
+  ![GDB与QEMU连接](./images/pa.png)
 
 2.展示复位向量处的指令，执行'x/10i $pc'，据此可以回答问题：
  
- ![复位向量处的指令](images/pb.png)
+ ![复位向量处的指令](./images/pb.png)
 
   可以发现最初执行的几条指令地址分别位于0x1000，0x1004，0x1008，0x100c，0x1010，0x1014。
 
