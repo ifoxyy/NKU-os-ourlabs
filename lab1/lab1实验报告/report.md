@@ -125,6 +125,7 @@ bootstacktop 标签在文件的 .data 段中被定义，它位于 bootstack 这�
      结果如下图：
 
 ​	![跳转OpenSBI执行](images/p2.png)
+
 5. 在GDB中执行：
    	`(gdb) x/10i $pc`
 
@@ -159,14 +160,14 @@ bootstacktop 标签在文件的 .data 段中被定义，它位于 bootstack 这�
 
    结果如下图：
 
-![p4](images/p4.png)
+	![p4](images/p4.png)
 
-```assembly
-# 内核入口点 (kern_entry)
-0x80200000 <kern_entry>:     auipc   sp,0x3
-0x80200004 <kern_entry+4>:   mv      sp,sp
-0x80200008 <kern_entry+8>:   j       0x8020000a <kern_init> # 无条件跳转到地址 0x8020000a（kern_init标签）
-```
+	```assembly
+	# 内核入口点 (kern_entry)
+	0x80200000 <kern_entry>:     auipc   sp,0x3
+	0x80200004 <kern_entry+4>:   mv      sp,sp
+	0x80200008 <kern_entry+8>:   j       0x8020000a <kern_init> # 无条件跳转到地址 0x8020000a（kern_init标签）
+	```
 
 
 
