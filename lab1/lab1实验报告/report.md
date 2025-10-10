@@ -138,7 +138,7 @@ bootstacktop 标签在文件的 .data 段中被定义，它位于 bootstack 这�
 
 结果如下图：
 
-​	![p3](images/p3.png)
+​	![p3](./images/p3.png)
 
 ```assembly
 # 核心ID检查
