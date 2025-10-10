@@ -127,18 +127,16 @@ bootstacktop 标签在文件的 .data 段中被定义，它位于 bootstack 这�
 
    ​	![从0x0100开始的代码](./images/p1.png)
 
-4. 随后使用`si`命令单步执行，直到执行到`0x1014: jr t0`，pc跳转至0x80000000，即跳转至OpenSBI.bin所在位置。
+4.随后使用`si`命令单步执行，直到执行到`0x1014: jr t0`，pc跳转至0x80000000，即跳转至OpenSBI.bin所在位置。
 
      结果如下图：
 
 ​	![跳转OpenSBI执行](./images/p2.png)
-
-5.在GDB中执行：
-	`(gdb) x/10i $pc`
+5. 在GDB中执行：`(gdb) x/10i $pc`
 
 结果如下图：
-
-​	![p3](./images/p3.png)
+	
+	![p4](images/p3.png)
 
 ```assembly
 # 核心ID检查
@@ -156,7 +154,7 @@ bootstacktop 标签在文件的 .data 段中被定义，它位于 bootstack 这�
 0x80000024:  ld      t0, 0(t0)       # 从地址0x80000418加载数据到t0
 ```
 
-6.1. 在GDB中执行：
+6.在GDB中执行：
    	`(gdb) b* kern_entry`
 
    ​	`(gdb) c`
