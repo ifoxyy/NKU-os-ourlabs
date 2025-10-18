@@ -5,6 +5,9 @@
 #include <string.h>
 #include <dtb.h>
 
+#include <slub.h> 
+void slub_check(void);
+
 int kern_init(void) __attribute__((noreturn));
 void grade_backtrace(void);
 void print_kerninfo(void);
