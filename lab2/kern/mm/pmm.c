@@ -1,5 +1,6 @@
 #include <default_pmm.h>
 #include <best_fit_pmm.h>
+#include <buddy_pmm.h>
 #include <defs.h>
 #include <error.h>
 #include <memlayout.h>
@@ -10,6 +11,8 @@
 #include <string.h>
 #include <riscv.h>
 #include <dtb.h>
+
+extern void buddy_check(void);
 
 // virtual address of physical page array
 struct Page *pages;
