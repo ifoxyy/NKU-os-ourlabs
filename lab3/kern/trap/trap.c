@@ -12,10 +12,6 @@
 
 #define TICK_NUM 100
 
-// 新增静态计数器
-static int ticks = 0;
-static int print_num = 0;
-
 static void print_ticks()
 {
     cprintf("%d ticks\n", TICK_NUM);
@@ -245,3 +241,4 @@ void trap(struct trapframe *tf)
     // dispatch based on what type of trap occurred
     trap_dispatch(tf);
 }
+
