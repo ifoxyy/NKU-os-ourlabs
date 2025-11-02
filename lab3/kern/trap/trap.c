@@ -192,16 +192,32 @@ void exception_handler(struct trapframe *tf)
     case CAUSE_FAULT_FETCH:
         break;
     case CAUSE_ILLEGAL_INSTRUCTION:
-        // 非法指令异常处理
-        /* LAB3 CHALLENGE3   YOUR CODE :  */
-        /*(1)输出指令异常类型（ Illegal instruction）
-         *(2)输出异常指令地址
-         *(3)更新 tf->epc寄存器
-         */
-        cprintf("Illegal instruction caught at 0x%08x\n", tf->epc);
+    {
+        uintptr_t pc = tf->epc;
+        uint16_t instr16;
+        bool ok = 1;
+
+        // 打印异常信息
+        cprintf("Illegal instruction caught at 0x%08x\n", pc);
         cprintf("Exception type: Illegal instruction\n");
-        tf->epc += 4; /* 跳过异常指令，假设为4字节 */
+
+        // 尝试读取触发地址处的前两个字节
+        // 注意：这里直接解引用假定 epc 可读（教学内核环境安全）
+        // 若有 copy_from_user 等安全读函数，可替换使用
+        instr16 = *(uint16_t *)pc;
+
+        if ((instr16 & 0x3) != 0x3)
+        {
+            // 若低两位不为 11，则为 16-bit 压缩指令
+            tf->epc += 2;
+        }
+        else
+        {
+            // 否则为 32-bit 指令
+            tf->epc += 4;
+        }
         break;
+    }
     case CAUSE_BREAKPOINT:
         cprintf("Exception type: breakpoint\n");
         cprintf("ebreak caught at 0x%08x\n", tf->epc);
@@ -261,6 +277,7 @@ void trap(struct trapframe *tf)
     // dispatch based on what type of trap occurred
     trap_dispatch(tf);
 }
+
 
 
 
