@@ -12,7 +12,6 @@
 
 #define TICK_NUM 100
 
-static int ticks = 0;     
 static int num = 0;   
 
 static void print_ticks()
@@ -262,6 +261,7 @@ void trap(struct trapframe *tf)
     // dispatch based on what type of trap occurred
     trap_dispatch(tf);
 }
+
 
 
 
