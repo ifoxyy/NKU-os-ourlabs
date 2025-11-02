@@ -204,13 +204,15 @@ void exception_handler(struct trapframe *tf)
         tf->epc += 4; /* 跳过异常指令，假设为4字节 */
         break;
     case CAUSE_BREAKPOINT:
-        // 断点异常处理
-        /* LAB3 CHALLLENGE3   YOUR CODE :  */
-        /*(1)输出指令异常类型（ breakpoint）
-         *(2)输出异常指令地址
-         *(3)更新 tf->epc寄存器
-         */
-
+        cprintf("Exception type: breakpoint\n");
+        cprintf("ebreak caught at 0x%08x\n", tf->epc);
+        // 检测指令长度（适用于rv64imafdc等支持压缩指令的架构）
+        uint16_t instr = *(uint16_t*)tf->epc;
+        if ((instr & 0x3) != 0x3) {
+            tf->epc += 2;  // 压缩指令
+        } else {
+            tf->epc += 4;  // 标准指令
+        }
         break;
 
     case CAUSE_MISALIGNED_LOAD:
@@ -260,5 +262,6 @@ void trap(struct trapframe *tf)
     // dispatch based on what type of trap occurred
     trap_dispatch(tf);
 }
+
 
 
