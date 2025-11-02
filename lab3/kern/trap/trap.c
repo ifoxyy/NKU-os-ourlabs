@@ -12,6 +12,9 @@
 
 #define TICK_NUM 100
 
+static int ticks = 0;     
+static int num = 0;   
+
 static void print_ticks()
 {
     cprintf("%d ticks\n", TICK_NUM);
@@ -132,12 +135,28 @@ void interrupt_handler(struct trapframe *tf)
         // In fact, Call sbi_set_timer will clear STIP, or you can clear it
         // directly.
         // cprintf("Supervisor timer interrupt\n");
-        /* LAB3 EXERCISE1   YOUR CODE :  */
+        /* LAB3 EXERCISE1   2313771 :  */
         /*(1)设置下次时钟中断- clock_set_next_event()
          *(2)计数器（ticks）加一
          *(3)当计数器加到100的时候，我们会输出一个`100ticks`表示我们触发了100次时钟中断，同时打印次数（num）加一
          * (4)判断打印次数，当打印次数为10时，调用<sbi.h>中的关机函数关机
          */
+               // (1) 设置下次时钟中断
+            clock_set_next_event();
+    
+              // (2) 计数器加一
+            ticks++;
+    
+            // (3) 每100次时钟中断打印一次
+            if (ticks % TICK_NUM == 0) {
+            print_ticks();
+            num++;
+        
+            // (4) 打印10次后关机
+            if (num == 10) {
+                sbi_shutdown();
+            }
+        }
         /* Supervisor timer interrupt */
 
         break;
@@ -241,4 +260,5 @@ void trap(struct trapframe *tf)
     // dispatch based on what type of trap occurred
     trap_dispatch(tf);
 }
+
 
