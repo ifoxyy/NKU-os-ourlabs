@@ -194,7 +194,7 @@ void exception_handler(struct trapframe *tf)
         break;
     case CAUSE_ILLEGAL_INSTRUCTION:
     {
-        uintptr_t pc = tf->epc;
+        uintptr_t pc = tf->epc;  // 从陷阱帧（trap frame）中获取异常发生时的程序地址
         uint16_t instr16;
 
         // 打印异常信息
@@ -207,12 +207,12 @@ void exception_handler(struct trapframe *tf)
         if ((instr16 & 0x3) != 0x3)
         {
             // 若低两位不为 11，则为 16-bit 压缩指令
-            tf->epc += 2;
+            tf->epc += 2;  // PC前进2字节
         }
         else
         {
             // 否则为 32-bit 指令
-            tf->epc += 4;
+            tf->epc += 4;  // PC前进4字节
         }
         break;
         }
@@ -275,6 +275,7 @@ void trap(struct trapframe *tf)
     // dispatch based on what type of trap occurred
     trap_dispatch(tf);
 }
+
 
 
 
