@@ -196,7 +196,6 @@ void exception_handler(struct trapframe *tf)
     {
         uintptr_t pc = tf->epc;
         uint16_t instr16;
-        bool ok = 1;
 
         // 打印异常信息
         cprintf("Illegal instruction caught at 0x%08x\n", pc);
@@ -276,6 +275,7 @@ void trap(struct trapframe *tf)
     // dispatch based on what type of trap occurred
     trap_dispatch(tf);
 }
+
 
 
 
