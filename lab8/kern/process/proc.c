@@ -878,30 +878,71 @@ load_icode(int fd, int argc, char **kargv)
         }
     }
 
-    // build user stack
+    // build user stack (修改为动态分配栈页)
     vm_flags = VM_READ | VM_WRITE | VM_STACK;
     if ((ret = mm_map(mm, USTACKTOP - USTACKSIZE, USTACKSIZE, vm_flags, NULL)) != 0) {
         goto bad_cleanup_mmap;
     }
-    assert(pgdir_alloc_page(mm->pgdir, USTACKTOP - PGSIZE, PTE_USER) != NULL);
-    assert(pgdir_alloc_page(mm->pgdir, USTACKTOP - 2 * PGSIZE, PTE_USER) != NULL);
-    assert(pgdir_alloc_page(mm->pgdir, USTACKTOP - 3 * PGSIZE, PTE_USER) != NULL);
-    assert(pgdir_alloc_page(mm->pgdir, USTACKTOP - 4 * PGSIZE, PTE_USER) != NULL);
+    
+    // 分配4个栈页
+    for (int i = 1; i <= 4; i++) {
+        if (pgdir_alloc_page(mm->pgdir, USTACKTOP - i * PGSIZE, PTE_USER) == NULL) {
+            goto bad_cleanup_mmap;
+        }
+    }
 
-    // set current mm and switch page table
+    // 设置当前mm并切换页表
     mm_count_inc(mm);
     current->mm = mm;
     current->pgdir = PADDR(mm->pgdir);
     lsatp(PADDR(mm->pgdir));
 
-    // setup trapframe
+    // ============ 关键修改：将参数压入用户栈 ============
+    uintptr_t stacktop = USTACKTOP;
+    char **uargv = NULL;
+    
+    // 计算参数总大小
+    int total_arg_size = 0;
+    for (int i = 0; i < argc; i++) {
+        total_arg_size += strlen(kargv[i]) + 1;
+    }
+    
+    // 为argv数组分配空间（每个参数一个指针）
+    int argv_size = (argc + 1) * sizeof(char *);
+    
+    // 计算栈指针位置（从高地址向低地址生长）
+    stacktop -= total_arg_size;  // 参数字符串
+    stacktop -= argv_size;       // argv数组
+    stacktop = ROUNDDOWN(stacktop, sizeof(long)); // 对齐
+    
+    // 复制参数字符串到栈中
+    char *arg_strings = (char *)stacktop;
+    char **arg_ptrs = (char **)(stacktop + total_arg_size);
+    
+    for (int i = 0; i < argc; i++) {
+        int len = strlen(kargv[i]) + 1;
+        memcpy(arg_strings, kargv[i], len);
+        arg_ptrs[i] = arg_strings - USTACKTOP;  // 存储相对地址或绝对地址
+        // 或者存储绝对地址：arg_ptrs[i] = (char *)arg_strings;
+        arg_strings += len;
+    }
+    arg_ptrs[argc] = NULL;  // argv以NULL结尾
+    
+    // ============ 修改：设置trapframe，传递参数 ============
     struct trapframe *tf = current->tf;
     uintptr_t sstatus = tf->status;
     memset(tf, 0, sizeof(struct trapframe));
-    tf->gpr.sp = USTACKTOP;
-    tf->epc = elf.e_entry;
+    
+    // 设置栈指针（指向参数区域下方）
+    tf->gpr.sp = stacktop;
+    
+    // 传递参数：a0 = argc, a1 = argv
+    tf->gpr.a0 = argc;
+    tf->gpr.a1 = (uintptr_t)arg_ptrs;  // argv指针
+    
+    tf->epc = elf.e_entry;              // 程序入口点
     tf->status = (sstatus & ~(SSTATUS_SPP | SSTATUS_SIE)) | SSTATUS_SPIE;
-
+    
     ret = 0;
 out:
     if (ph_table) kfree(ph_table);
